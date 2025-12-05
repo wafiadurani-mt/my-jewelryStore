@@ -9,7 +9,7 @@ export const useProducts = () => {
     error.value = null
 
     try {
-      const response = await fetch("https://dummyjson.com/products")
+      const response = await $fetch("https://dummyjson.com/products")
       const data = await response.json()
       console.log(data)  // Log API response to verify it’s being fetched correctly
       products.value = data?.products || []

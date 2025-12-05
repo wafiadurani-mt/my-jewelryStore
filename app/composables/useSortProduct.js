@@ -1,104 +1,87 @@
-
-
 // composables/useSortProduct.js
+import { ref, computed, watch } from "vue";
+
 export const useSortProduct = (products) => {
   const route = useRoute();
   const router = useRouter();
 
-  // read initial sort from URL if you want
-  const sortOrderValue = ref(route.query.sort || '');
+  // initial sort from URL if present
+  const sortOrderValue = ref(route.query.sort || "");
+
+  // keep local sortOrderValue in sync with URL changes (back/forward, etc.)
+  watch(
+    () => route.query.sort,
+    (newSort) => {
+      sortOrderValue.value = newSort || "";
+    }
+  );
 
   const sortedProducts = computed(() => {
-    let items = products.value ? [...products.value] : [];
+    const raw = products?.value;
+    let items = Array.isArray(raw) ? [...raw] : [];
 
-    // Price sorting
-    if (sortOrderValue.value === 'lowToHigh') {
+    if (sortOrderValue.value === "lowToHigh") {
+      // Price: low → high
       items.sort((a, b) => a.price - b.price);
-    } else if (sortOrderValue.value === 'highToLow') {
+    } else if (sortOrderValue.value === "highToLow") {
+      // Price: high → low
       items.sort((a, b) => b.price - a.price);
-    }
-    // Name sorting
-    else if (sortOrderValue.value === 'name') {
+    } else if (sortOrderValue.value === "name") {
+      // Name A → Z
       items.sort((a, b) => a.title.localeCompare(b.title));
-    }
-    // Asc / Desc by ID
-    else if (sortOrderValue.value === 'ascendingOrder') {
+    } else if (sortOrderValue.value === "ascendingOrder") {
+      // ID ascending
       items.sort((a, b) => a.id - b.id);
-    } else if (sortOrderValue.value === 'descendingOrder') {
+    } else if (sortOrderValue.value === "descendingOrder") {
+      // ID descending
       items.sort((a, b) => b.id - a.id);
     }
 
     return items;
   });
 
-  const sortLowToHigh = () => {
-    sortOrderValue.value = 'lowToHigh';
+  const pushSort = (sort) => {
     router.push({
       query: {
         ...route.query,
-        sort: sortOrderValue.value,
-        page:1
-      
-        
+        sort,
+        page: 1, // reset page when sorting changes
       },
     });
+  };
+
+  const sortLowToHigh = () => {
+    sortOrderValue.value = "lowToHigh";
+    pushSort("lowToHigh");
   };
 
   const sortHighToLow = () => {
-    sortOrderValue.value = 'highToLow';
-    router.push({
-      query: {
-        ...route.query,
-        sort: sortOrderValue.value,
-        page:1
-        
-      },
-    });
+    sortOrderValue.value = "highToLow";
+    pushSort("highToLow");
   };
 
-  const sortByname = () => {
-    sortOrderValue.value = 'name';
-    router.push({
-      query: {
-        ...route.query,
-        sort: sortOrderValue.value,
-        page:1
-       
-      },
-    });
+  const sortByName = () => {
+    sortOrderValue.value = "name";
+    pushSort("name");
   };
 
   const sortAscendingOrder = () => {
-    sortOrderValue.value = 'ascendingOrder';
-    router.push({
-      query: {
-        ...route.query,
-        sort: sortOrderValue.value,
-        page:1
-        
-      },
-    });
+    sortOrderValue.value = "ascendingOrder";
+    pushSort("ascendingOrder");
   };
 
   const sortDescendingOrder = () => {
-    sortOrderValue.value = 'descendingOrder';
-    router.push({
-      query: {
-        ...route.query,
-        sort: sortOrderValue.value,
-        page:1
-        
-      },
-    });
+    sortOrderValue.value = "descendingOrder";
+    pushSort("descendingOrder");
   };
 
   const clearSort = () => {
-    sortOrderValue.value = '';
+    sortOrderValue.value = "";
     router.push({
       query: {
         ...route.query,
         sort: undefined,
-        page: undefined,
+        page: 1, // or undefined if you want to fully clear
       },
     });
   };
@@ -107,7 +90,7 @@ export const useSortProduct = (products) => {
     sortedProducts,
     sortLowToHigh,
     sortHighToLow,
-    sortByname,
+    sortByName,
     sortAscendingOrder,
     sortDescendingOrder,
     clearSort,
