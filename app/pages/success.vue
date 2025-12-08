@@ -1,6 +1,6 @@
 <template>
   <main class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-    <section class="bg-white max-w-lg w-full rounded-xl shadow-lg p-8 text-center">
+    <section class="bg-white max-w-xl w-full rounded-xl shadow-lg p-8 text-center">
 
       <!-- Success Emoji -->
       <div class="text-6xl mb-4">✅</div>
@@ -16,7 +16,7 @@
       </p>
 
       <!-- Order details box -->
-      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-left mb-6">
+      <div class="bg-gray-50 w-full border border-gray-200 rounded-lg p-4 text-left mb-6">
         <h2 class="text-sm font-semibold text-gray-700 mb-2">Order Summary</h2>
 
         <!-- Show loading state -->

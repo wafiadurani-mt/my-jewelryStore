@@ -132,7 +132,7 @@ const removeItem = (itemId) => {
   
 }
  const updateQuantity=(itemId,itemquantity)=>{
-  if(itemquantity>1){
+  if(itemquantity>=1){
     cartStore.updateQuantity(itemId,itemquantity)
     isUpdatedQuantity[itemId]=true
     setTimeout(()=>{
