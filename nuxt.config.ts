@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  srcDir: 'app/',
   css: ['font-awesome/css/font-awesome.css','~/assets/css/main.css'],
   vite: {
     plugins: [
@@ -24,5 +25,11 @@ export default defineNuxtConfig({
     
     domains: ["fakestoreapi.com"]
 
+  },
+  runtimeConfig: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    public: {
+      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY
+    }
   },
 })

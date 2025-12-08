@@ -1,53 +1,45 @@
-// composables/useCategoryList.js
-
+// composables/useCategoryFilter.js
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "#imports";
 
 export const useCategoryFilter = () => {
-  
-  const route=useRoute()
-  const router=useRouter()
+  const route = useRoute();
+  const router = useRouter();
 
-  const categories=ref([]) // array for storing categories
-  const selectedCategories=ref(route.query.category || "" )
+  const categories = ref([]);          // [{ slug, name, url }, ...]
+  const selectedCategory = ref(route.query.category || ""); // slug string
 
-  const fetchCategories=async () =>{
-    try{
-      const data = await $fetch("https://dummyjson.com/products/categories")
-      categories.value=Array.isArray(data) ? data : []
+  const fetchCategories = async () => {
+    const data = await $fetch("https://dummyjson.com/products/categories");
+    categories.value = Array.isArray(data) ? data : [];
+  };
 
-    } catch(e){
-      console.error("Error fetching categories:", e);
-      categories.value=[]
-    }
-  }
-
-
-  // detect change in route
-  watch(()=>route.query.category,
-  (val) =>{
-    selectedCategories.value=val || "";
-  }
-)
-  //for setting Category
-  const setCategory=(category) =>{
-    selectedCategories.value=category
+  const setCategory = (slug) => {
+    selectedCategory.value = slug || "";
     router.push({
-      query:{
+      query: {
         ...route.query,
-        category:category || undefined,
-        page:1
-      }
-    })
-  }
+        category: selectedCategory.value || undefined,
+        page: 1,
+      },
+    });
+  };
 
-  const clearCategory=()=>{
-    setCategory('');
-  }
+  const clearCategory = () => setCategory("");
+
+  // keep in sync with URL
+  watch(
+    () => route.query.category,
+    (val) => {
+      selectedCategory.value = val || "";
+    }
+  );
 
   return {
     categories,
-    selectedCategories,
+    selectedCategory,
     fetchCategories,
     setCategory,
     clearCategory,
-  }
-}
+  };
+};

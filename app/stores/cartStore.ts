@@ -1,3 +1,4 @@
+
 import { defineStore } from 'pinia'
 
 type Product = {
@@ -6,62 +7,63 @@ type Product = {
   price: number
   image: string
   quantity: number
-  category:string
+  category: string
 }
 
 export const useCartStore = defineStore('cartStore', {
   state: () => ({
     cart: [] as Product[]
   }),
- //computed views of the data
- /** Getters dont change the state they just compute values from it
-  * API x
-  * async x
-  * actions x
-  * state modifying logic
-  */
+
+  // computed views of the data
   getters: {
     // total distinct items
-    //Two methods to get the state of the
-    /** cant call actions  */
     cartCount: (state) => state.cart.length,
 
-    /** Gives the total of item price * quantity */
+    // total price = Σ price * quantity
     cartTotal: (state) =>
       state.cart.reduce((total, item) => total + item.price * item.quantity, 0),
   },
- //functions that change the data
- // getters can be accessed using this.gettername inside actions wheras vice versa isnt allowed
+
+  // functions that change the data
   actions: {
     addToCart(product: Product) {
-      const existItem = this.cart.find(item => item.id === product.id)
+      const existingItem = this.cart.find(item => item.id === product.id)
 
-      if (existItem) {
-        existItem.quantity += 1
-        localStorage.setItem('items',JSON.stringify(this.cart))
+      if (existingItem) {
+        existingItem.quantity += 1
       } else {
-        this.cart.push({ ...product, quantity: 1 })
-        localStorage.setItem('items',JSON.stringify(this.cart))
-
-        
+        // trust the incoming shape, but ensure quantity at least 1
+        this.cart.push({
+          ...product,
+          quantity: product.quantity || 1,
+        })
       }
+
+      localStorage.setItem('items', JSON.stringify(this.cart))
     },
 
     removeFromCart(id: number) {
       this.cart = this.cart.filter(item => item.id !== id)
-      localStorage.setItem('items',JSON.stringify(this.cart))
+      localStorage.setItem('items', JSON.stringify(this.cart))
     },
 
-    // action to increase the quantity of the product
-    updateQuantity(itemId: number,newQuantity:number) {
+    // set an exact quantity
+    updateQuantity(itemId: number, newQuantity: number) {
       const itemInCart = this.cart.find(item => item.id === itemId)
-      if (itemInCart) {
-        itemInCart.quantity=newQuantity
-        localStorage.setItem('items',JSON.stringify(this.cart))
+      if (!itemInCart) return
+
+      if (newQuantity <= 0) {
+        // optional: remove if <= 0
+        this.removeFromCart(itemId)
+      } else {
+        itemInCart.quantity = newQuantity
       }
+
+      localStorage.setItem('items', JSON.stringify(this.cart))
     },
 
-    // action to decrease the quantity of the product
+    // decrease quantity by 1 (remove if reaches 0)
     decreaseQuantity(itemId: number) {
       const itemInCart = this.cart.find(item => item.id === itemId)
       if (!itemInCart) return
@@ -69,17 +71,27 @@ export const useCartStore = defineStore('cartStore', {
       if (itemInCart.quantity > 1) {
         itemInCart.quantity -= 1
       } else {
-        /** will update the cart with the new values */
         this.removeFromCart(itemId)
       }
+
+      localStorage.setItem('items', JSON.stringify(this.cart))
     },
-    clearCart(){
-      this.cart=[];
+
+    clearCart() {
+      this.cart = []
       localStorage.removeItem('items')
     },
-    loadToCart(){
-      const saveItems=localStorage.getItem('items')
-      if(saveItems) this.cart=JSON.parse(saveItems)
+
+    loadToCart() {
+      const savedItems = localStorage.getItem('items')
+      if (savedItems) {
+        this.cart = JSON.parse(savedItems)
+      }
+    },
+    clearCartItem(itemID:number){
+       const itemInCart = this.cart.find(item => item.id === itemID)
+       if (!itemInCart) return
+       this.removeFromCart(itemID)
     }
   }
 })

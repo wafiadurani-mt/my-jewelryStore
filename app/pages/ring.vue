@@ -72,19 +72,20 @@
 
         <!--Category Dropdown-->
         <select
-          class="border px-3 py-1"
-          :value="selectedCategory"
-          @change="onCategoryChange"
+        class="border px-3 py-1"
+        :value="selectedCategory"
+        @change="onCategoryChange"
+      >
+        <option value="">All Categories</option>
+        <option
+          v-for="cat in categories"
+          :key="cat.slug"
+          :value="cat.slug"
         >
-          <option value="">All Categories</option>
-          <option
-            v-for="cat in categories"
-            :key="cat.slug"
-            :value="cat.slug"
-          >
-            {{ cat.name }}
-          </option>
-</select>
+          {{ cat.name }}
+        </option>
+      </select>
+
 
       </div>
 
@@ -117,7 +118,7 @@
               <h3 class="text-xl text-center">{{ product.title }}</h3>
               <p class="text-lg bold text-center">Price: ${{ product.price }}</p>
               <button
-                class="w-full text-center border p-1 mt-4 bg-black text-white"
+                class="w-full text-center border p-1 mt-4 bg-black text-white hover:bg-white hover:text-black"
                 @click="addToCart(product)"
               >
                 Add to cart
@@ -142,19 +143,22 @@ import { useProducts } from "~/stores/productStore";
 import { usePagination } from "~/composables/usePagination";
 import { useSortProduct } from "~/composables/useSortProduct";
 import { useCategoryFilter } from "~/composables/useCategoryFilter";
+import {useCartStore} from "~/stores/cartStore"
+
 
 const productStore = useProducts();
+const cartStore=useCartStore();
 
-// category composable
+// ✅ category composable (NO local selectedCategory ref)
 const {
-  categories,         // array of { slug, name, url }
-  selectedCategory,   // ref<string> holds slug, e.g. "smartphones"
+  categories,
+  selectedCategory,   // this is a ref
   fetchCategories,
   setCategory,
- 
+  
 } = useCategoryFilter();
 
-// pagination composable
+// ✅ pagination composable
 const {
   setPerPage,
   prevPage,
@@ -171,7 +175,8 @@ const {
   initialPerPage: 8,
   totalItems: computed(() => productStore.total),
   onPageChange: async (limit, skip) => {
-    await productStore.fetchProducts(limit, skip, selectedCategory.value);
+   
+    await productStore.fetchProducts(limit, skip, selectedCategory.value || "");
   },
 });
 
@@ -209,19 +214,27 @@ const handleSortChange = () => {
   }
 };
 
-// handle <select> change event for category
+// handle category <select> change
 const onCategoryChange = async (event) => {
   const value = event.target.value; // slug or ""
-  setCategory(value);
-  await goToFirst();
+  setCategory(value);               // updates ref + URL
+  await goToFirst();                // reload first page with new category
 };
 
 const addToCart = (product) => {
-  console.log("Add to cart:", product);
+  cartStore.addToCart({
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.thumbnail,   // map thumbnail -> image
+    quantity: 1,
+    category: product.category,
+  })
 };
 
 onMounted(async () => {
-  await fetchCategories(); // load {slug, name, url}[]
-  await goToFirst();       // load products for current category (from URL, if any)
+  await fetchCategories(); // load [{slug, name, url}, ...]
+        // triggers onPageChange -> fetchProducts
+ await goToFirst()
 });
 </script>

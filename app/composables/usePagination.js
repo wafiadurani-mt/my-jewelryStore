@@ -14,7 +14,8 @@ export const usePagination = ({
     const total = totalItems ? Number(totalItems.value) || 0 : 0;
     return total > 0 ? Math.ceil(total / perPage.value) : 1;
   });
-
+  const route=useRoute()
+  const router=useRouter()
   const canPrev = computed(() => page.value > 1);
   const canNext = computed(() => page.value < totalPages.value);
 
@@ -29,6 +30,7 @@ export const usePagination = ({
   const goToFirst = async () => {
     page.value = 1;
     await trigger();
+    updatePageurl()
   };
 
   const goToLast = async () => {
@@ -40,6 +42,7 @@ export const usePagination = ({
     if (!canNext.value) return;
     page.value++;
     await trigger();
+    updatePageurl()
   };
 
   const prevPage = async () => {
@@ -52,7 +55,21 @@ export const usePagination = ({
     perPage.value = newPerPage;
     page.value = 1;
     await trigger();
+    updatePageurl()
   };
+  const updatePageurl=()=>{
+    if (page.value === 1 && route.query.page === undefined) {
+      return
+    }
+    router.push({
+        query:{
+            ...route.query,
+            page:page.value
+        }
+    })
+  } 
+
+
 
   return {
     setPerPage,
@@ -65,5 +82,7 @@ export const usePagination = ({
     totalPages,
     canPrev,
     canNext,
+    updatePageurl,
+    trigger
   };
 };

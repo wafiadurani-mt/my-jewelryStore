@@ -26,7 +26,7 @@
             <div class="flex-shrink-0">
               <NuxtImg 
                 class="w-[120px] h-[120px] object-contain border rounded-md"
-                :src="item.thumbnail" 
+                :src="item.image" 
                 alt="Product Image"
               />
             </div>
@@ -48,6 +48,7 @@
                   class="border w-16 text-center ml-3 py-1 rounded"
                   @change="updateQuantity(item.id, item.quantity)"
                 />
+                <span v-if="isUpdatedQuantity[item.id]" class="text-green-800 ml-2">Updated</span>
               </div>
             </div>
 
@@ -116,7 +117,7 @@ import { useCartStore } from '~/stores/cartStore'
 // Get the cart store instance
 const cartStore = useCartStore()
 //items value check
-
+const isUpdatedQuantity=reactive({})
 
 // Reactive values from the cart store
 /**  dont need to use cartStore.length everytime while accessing the store */
@@ -127,16 +128,27 @@ const items = cart
 
 // Method to remove an item from the cart
 const removeItem = (itemId) => {
-  cartStore.decreaseQuantity(itemId)
+  cartStore.clearCartItem(itemId)
   
 }
  const updateQuantity=(itemId,itemquantity)=>{
   if(itemquantity>1){
     cartStore.updateQuantity(itemId,itemquantity)
+    isUpdatedQuantity[itemId]=true
+    setTimeout(()=>{
+      isUpdatedQuantity[itemId]=false
+    },1000)
+    
   }
   else{
     cartStore.decreaseQuantity(itemId)
+    isUpdatedQuantity[itemId]=true
+    setTimeout(()=>{
+      isUpdatedQuantity[itemId]=false
+    },1000)
+    
   }
+  
  }
 
 

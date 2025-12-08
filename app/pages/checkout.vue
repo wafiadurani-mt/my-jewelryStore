@@ -22,7 +22,7 @@
                 class="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black focus:border-black"
                 placeholder="e.g. wafia"
                 >
-                <p v-if="showErrors && !customer.firstName" class="text-xs text-red-500 mt-1">
+                <p v-if="showErrors &&!customer.firstName" class="text-xs text-red-500 mt-1">
                 Name is required.
                 </p>
             </div>
@@ -37,7 +37,7 @@
                 class="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black focus:border-black"
                 placeholder="e.g. khan"
                 >
-                <p v-if="showErrors && !customer.lastName" class="text-xs text-red-500 mt-1">
+                <p v-if="showErrors && showErrors && !customer.lastName" class="text-xs text-red-500 mt-1">
                 Name is required.
                 </p>
             </div>
@@ -72,7 +72,7 @@
               class="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black focus:border-black"
               placeholder="e.g. +92 300 1234567"
             >
-            <p v-if="showErrors && !customer.phone" class="text-xs text-red-500 mt-1">
+            <p v-if=" showErrors && !customer.phone" class="text-xs text-red-500 mt-1">
               Phone is required.
             </p>
           </div>
@@ -88,7 +88,7 @@
               class="w-full border rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black focus:border-black"
               placeholder="e.g. home address"
             >
-            <p v-if="showErrors && !customer.phone" class="text-xs text-red-500 mt-1">
+            <p v-if="showErrors && !customer.address" class="text-xs text-red-500 mt-1">
               Address is required.
             </p>
           </div>
@@ -112,7 +112,7 @@
             <div>
               <p class="font-medium">{{ item.title }}</p>
               <p class="text-sm text-gray-500">
-                Qty: {{ item.quantity }} × ${{ item.price }}
+                Qty: {{ item.quantity }} × £{{ item.price }}
               </p>
             </div>
             <p class="font-semibold">
@@ -145,14 +145,18 @@
 
           <button
             class="mt-4 w-full bg-black text-white py-2 rounded-md text-sm font-medium disabled:bg-gray-400 cursor-pointer"
-            :disabled="cartStore.cartCount === 0 || !isFormValid"
+            :disabled="cartStore.cartCount === 0 || !isFormValid || loading"
             @click="handlePlaceOrder"
           >
-            Place Order
+            {{ loading ? 'Redirecting to Stripe…' : 'Place Order' }}
           </button>
+
 
           <p v-if="showErrors && !isFormValid" class="text-xs text-red-500 mt-2">
             Please fill in your name, a valid email, and phone before placing the order.
+          </p>
+          <p v-if="stripeError" class="text-xs text-red-500 mt-2">
+            {{ stripeError }}
           </p>
         </div>
       </aside>
@@ -178,9 +182,12 @@ const customer = reactive({
 
 const showErrors = ref(false)
 
+const loading=ref(false)
+const stripeError=ref(null)
+
 const isValidEmail = (email) => {
   if (!email) return false
-  // Super simple email check (good enough for frontend)
+  // simple email check (good enough for frontend)
   return /\S+@\S+\.\S+/.test(email)
 }
 
@@ -194,14 +201,48 @@ const isFormValid = computed(() => {
   )
 })
 
-const handlePlaceOrder = () => {
+const handlePlaceOrder = async () => {
   showErrors.value = true
+  stripeError.value=null
 
   if (!isFormValid.value) {
     // stop here, show validation errors
     return
   }
-  alert("The order has been placed")
-  cartStore.clearCart()
+  try{
+    loading.value = true
+
+    // ✅ THIS calls the server API, it does NOT change route
+   const { url } = await $fetch('/api/checkout', {
+   method: 'POST',
+  body: {
+    items: cartStore.cart.map((item) => ({
+      id: item.id,
+      name: item.title,
+      price: item.price,         // in £
+      quantity: item.quantity,
+    })),
+  customer: {
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phone: customer.phone,
+      address: customer.address,
+    },
+  },
+})
+
+
+    // Redirect to Stripe Checkout page returned by server
+    window.location.href = url
+    
+  }catch(errors){
+    console.error(errors)
+    stripeError.value='Something went wrong while redirecting to payment'
+  }finally{
+    loading.value=false
+  }
+  /*alert("The order has been placed")
+  cartStore.clearCart()*/
 }
 </script>
