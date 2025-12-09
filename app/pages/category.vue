@@ -5,7 +5,7 @@
       id="product-heading"
       class="bg-gradient-to-r from-black via-black/70 to-black/40 flex flex-col justify-center items-center gap-2 md:gap-5 w-full h-70 px-4 text-center"
     >
-      <h1 class="text-white font-sans font-bold text-3xl md:text-4xl">Rings</h1>
+      <h1 class="text-white font-sans font-bold text-3xl md:text-4xl">Shop Here</h1>
       <p class="text-white font-sans mt-3 max-w-2xl">
         Discover timeless elegance and craftsmanship in every curve
       </p>

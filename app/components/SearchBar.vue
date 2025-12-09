@@ -4,7 +4,7 @@
     <input
       v-model="model"
       type="search"
-      placeholder="Search rings..."
+      placeholder="Search products..."
       class="w-full max-w-lg h-10 border rounded-full px-4 bg-white 
              focus:outline-none focus:ring-2 focus:ring-black/60 transition"
     />
