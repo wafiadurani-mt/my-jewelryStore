@@ -107,10 +107,10 @@ const AUTOPLAY_MS = 5000   // time between slides (increase to slow down)
 const TRANSITION_MS = 500  // animation speed (ms)
 
 const slides = [
-  { src: '/images/jewelry-img.jpg', alt: 'Jewelry 1' },
-  { src: '/images/leaves.jpg',      alt: 'Jewelry 2' },
-  { src: '/images/shirt.jpg',       alt: 'Jewelry 3' },
-  { src: '/images/tessa.jpg',       alt: 'Jewelry 4' },
+  { src: 'images/jewelry-img.jpg', alt: 'Jewelry 1' },
+  { src: 'images/leaves.jpg',      alt: 'Jewelry 2' },
+  { src: 'images/shirt.jpg',       alt: 'Jewelry 3' },
+  { src: 'images/tessa.jpg',       alt: 'Jewelry 4' },
 ]
 
 const maxIndex = computed(() => Math.max(0, slides.length - VISIBLE))
