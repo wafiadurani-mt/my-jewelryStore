@@ -73,7 +73,7 @@
 import MyBanner from '~/components/MyBanner.vue'
 
 const categories = [
-  { id: 1, name: 'Rings', link: '/ring', image: 'images/ring.jpg' },
+  { id: 1, name: 'Rings', link: '/category', image: 'images/ring.jpg' },
   { id: 2, name: 'Necklace', link: '/necklace', image: 'images/necklace.jpg' },
   { id: 3, name: 'Bracelets', link: '/bracelets', image: 'images/bracelets.jpg' },
   { id: 4, name: 'Earrings', link: '/earrings', image: 'images/ring.jpg' }

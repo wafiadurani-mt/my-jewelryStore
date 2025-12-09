@@ -11,13 +11,12 @@
         <li class="nav-link-list nav-link-option">
           
           <NuxtLink to="/" class=" hover:text-yellow-500">Home</NuxtLink>
-          <NuxtLink to="/ring" class=" hover:text-yellow-500">Ring</NuxtLink>
+          <NuxtLink to="/category" class=" hover:text-yellow-500">Category</NuxtLink>
 
-          <NuxtLink to="/necklace" class=" hover:text-yellow-500">Necklace</NuxtLink>
+          <NuxtLink to="/contact" class=" hover:text-yellow-500">Contact us</NuxtLink>
          
-          <NuxtLink to="/earrings" class=" hover:text-yellow-500">Earrings</NuxtLink>
         
-          <NuxtLink to="/about" class=" hover:text-yellow-500">About</NuxtLink>
+          <NuxtLink to="/about" class=" hover:text-yellow-500">About us </NuxtLink>
         </li>
 
         <!-- Action Buttons: Login, Cart, Profile, Search -->
