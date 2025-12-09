@@ -20,7 +20,7 @@
     >
       <!--Category Items-->
       <div class="category-item text-center w-full h-60 md:h-50 flex flex-col justify-center items-center">
-        <NuxtImg 
+        <img 
           :src="category.image" 
           alt="category.name" 
           class="category-image object-cover w-full h-full rounded-lg"
