@@ -22,7 +22,7 @@
       <div class="category-item text-center w-full h-60 md:h-50 flex flex-col justify-center items-center">
         <img 
           :src="category.image" 
-          alt="category.name" 
+          :alt="category.name" 
           class="category-image object-cover w-full h-full rounded-lg"
         />
         <p class="category-name mt-4 text-sm md:text-lg font-medium">
@@ -73,10 +73,10 @@
 import MyBanner from '~/components/MyBanner.vue'
 
 const categories = [
-  { id: 1, name: 'Rings', link: '/ring', image: '/images/ring.jpg' },
-  { id: 2, name: 'Necklace', link: '/necklace', image: '/images/necklace.jpg' },
-  { id: 3, name: 'Bracelets', link: '/bracelets', image: '/images/bracelets.jpg' },
-  { id: 4, name: 'Earrings', link: '/earrings', image: '/images/ring.jpg' }
+  { id: 1, name: 'Rings', link: '/ring', image: 'images/ring.jpg' },
+  { id: 2, name: 'Necklace', link: '/necklace', image: 'images/necklace.jpg' },
+  { id: 3, name: 'Bracelets', link: '/bracelets', image: 'images/bracelets.jpg' },
+  { id: 4, name: 'Earrings', link: '/earrings', image: 'images/ring.jpg' }
 ]
 </script>
 
