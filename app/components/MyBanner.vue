@@ -71,7 +71,7 @@
           class="h-full flex items-center justify-center"
           :style="{ width: (100 / VISIBLE) + '%' }"
         >
-          <NuxtImg
+          <img
             :src="img.src"
             :alt="img.alt"
             width="600"
